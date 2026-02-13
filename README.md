@@ -19,31 +19,31 @@ Alternatives:
 
 ## Key components
 
-- **Orchestrator / runner**: runs top-level processes and then their dependent child processes; uses a control table to build the dependency tree. (see `reports.py`) fileciteturn0file0L1-L199  
-- **Entry point**: `reports_main.py` creates config, DB connection, email sender, process log, then executes the run. fileciteturn0file1L1-L24  
-- **DB layer**: `DatabaseConnection` supports DML and streaming SELECTs via `QueryResults`. fileciteturn0file4L1-L132  
-- **Process logging**: writes a daily log row into `EWP1AFCB.PROCESS_LOG` (insert/update/delete pattern). fileciteturn0file13L1-L78  
-- **Email notifications**: sends Outlook emails and attaches the log file. fileciteturn0file15L1-L105  
-- **Config + logging**: YAML-driven settings + `logging.config.dictConfig`. fileciteturn0file2L1-L77  
-- **File export helpers**: CSV/TXT + Excel writing and reading utilities. fileciteturn0file9L1-L266  
-- **Edge/Selenium helpers**: driver lifecycle, waits, login, proxy handling, and Edge driver version management. fileciteturn0file5L1-L118 fileciteturn0file17L1-L39 fileciteturn0file12L1-L60 fileciteturn0file14L1-L35 fileciteturn0file7L1-L127 fileciteturn0file6L1-L23
+- **Orchestrator / runner**: runs top-level processes and then their dependent child processes; uses a control table to build the dependency tree. (see `reports.py`) 
+- **Entry point**: `reports_main.py` creates config, DB connection, email sender, process log, then executes the run. 
+- **DB layer**: `DatabaseConnection` supports DML and streaming SELECTs via `QueryResults`.  
+- **Process logging**: writes a daily log row into `EWP1AFCB.PROCESS_LOG` (insert/update/delete pattern).  
+- **Email notifications**: sends Outlook emails and attaches the log file. 
+- **Config + logging**: YAML-driven settings + `logging.config.dictConfig`. 
+- **File export helpers**: CSV/TXT + Excel writing and reading utilities. 
+- **Edge/Selenium helpers**: driver lifecycle, waits, login, proxy handling, and Edge driver version management. 
 
 ---
 
 ## How it works (high level)
 
-1. **Reads process definitions** from `SCHEMA.PROCESS_CONTROL` (id, name, full script path, parent id). fileciteturn0file0L18-L26  
-2. Builds a **dependency graph** (parent → child). fileciteturn0file0L44-L67  
-3. Executes **main (no-parent) processes** in parallel via `ThreadPoolExecutor`. fileciteturn0file0L78-L132  
-4. After a parent completes, runs its **children** (also parallel) recursively. fileciteturn0file0L120-L161  
-5. Writes a **process run log** to `SCHEMA.PROCESS_LOG` and emails results with the log attached. fileciteturn0file0L78-L115 fileciteturn0file15L77-L105  
+1. **Reads process definitions** from `SCHEMA.PROCESS_CONTROL` (id, name, full script path, parent id). fileciteturn0file0L18-L26  
+2. Builds a **dependency graph** (parent → child). 
+3. Executes **main (no-parent) processes** in parallel via `ThreadPoolExecutor`.   
+4. After a parent completes, runs its **children** (also parallel) recursively.  
+5. Writes a **process run log** to `SCHEMA.PROCESS_LOG` and emails results with the log attached. 
 
 ---
 
 ## Prerequisites
 
 ### OS / runtime
-- **Windows** (required for Outlook COM automation via `win32com`). fileciteturn0file15L1-L10  
+- **Windows** (required for Outlook COM automation via `win32com`). fileciteturn0file15L1-L10  
 - Python 3.10+ recommended
 
 ### Dependencies (typical)
@@ -55,11 +55,11 @@ Alternatives:
 - `requests`, `urllib3` (Edge driver downloader)
 
 ### Teradata connectivity
-- A configured **ODBC DSN** (example in YAML: `"DSN=TD Prod"`). fileciteturn0file2L25-L33  
+- A configured **ODBC DSN** (example in YAML: `"DSN=TD Prod"`). fileciteturn0file2L25-L33  
 
 ### Environment variables
-- `USERNAME` is used by Edge/driver modules and login automation. fileciteturn0file7L20-L29 fileciteturn0file12L18-L27  
-- Optional: `HTTP_PROXY`, `HTTPS_PROXY` (proxy manager clears/restores). fileciteturn0file14L1-L35  
+- `USERNAME` is used by Edge/driver modules and login automation.  
+- Optional: `HTTP_PROXY`, `HTTPS_PROXY` (proxy manager clears/restores)
 
 ---
 
@@ -82,7 +82,7 @@ pip install -r requirements.txt
 
 ## Configuration
 
-Update `config.yaml` with your environment specifics (log folder, email recipients, DSN, logging handlers). fileciteturn0file2L1-L61  
+Update `config.yaml` with your environment specifics (log folder, email recipients, DSN, logging handlers). 
 
 Example structure (trimmed):
 
@@ -98,14 +98,14 @@ database:
   dsn: "DSN=TD Prod"
 ```
 
-Logging is configured via `logging.dictConfig` and the file handler path is updated at runtime with a date-stamped filename. fileciteturn0file2L43-L77  
+Logging is configured via `logging.dictConfig` and the file handler path is updated at runtime with a date-stamped filename. 
 
 ---
 
 ## Database tables expected
 
 ### `SCHEMA.PROCESS_CONTROL`
-Used by the orchestrator to determine what to run and dependency order. fileciteturn0file0L18-L26  
+Used by the orchestrator to determine what to run and dependency order. fileciteturn0file0L18-L26  
 
 Minimum required columns (as used in code):
 - `PROCESS_ID`
@@ -115,7 +115,7 @@ Minimum required columns (as used in code):
 - `PARENT_PROCESS_ID`
 
 ### `SCHEMA.PROCESS_LOG`
-Used by `ProcessLog` to track daily runs. fileciteturn0file13L1-L78  
+Used by `ProcessLog` to track daily runs. fileciteturn0file13L1-L78  
 
 ---
 
@@ -130,7 +130,7 @@ The runner will:
 - insert a PROCESS_LOG row (after deleting any existing row for the same date/process)
 - execute processes in parallel with dependency ordering
 - update PROCESS_LOG with SUCCESS/ERROR
-- email results and attach the log file fileciteturn0file0L78-L115  
+- email results and attach the log file fileciteturn0file0L78-L115  
 
 ---
 
@@ -173,9 +173,9 @@ reports-orchestrator/
 
 ## Notes / limitations
 
-- Email sending uses Outlook COM (`win32com`) and is Windows/Outlook dependent. fileciteturn0file15L1-L10  
-- The Edge driver downloader uses `verify=False` HTTPS requests; ensure your corporate security policies allow this. fileciteturn0file7L33-L88  
-- `reports_main.py` currently imports `GetDriver` which is not present in the uploaded files; either remove that import or add the missing module/class. fileciteturn0file1L1-L7  
+- Email sending uses Outlook COM ('win32com') and is Windows/Outlook dependent 
+- The Edge driver downloader uses `verify=False` HTTPS requests; ensure your corporate security policies allow this. 
+- `reports_main.py` currently imports `GetDriver` which is not present in the uploaded files; either remove that import or add the missing module/class.
 
 ---
 
