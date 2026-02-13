@@ -11,10 +11,10 @@ def main():
     config = Config()
     connection = DatabaseConnection(config=config)
     bau_reports = Reports(config=config,
-                             email_sender=EmailSender(config=config),
-                             process_log=ProcessLog(process='Reports', config=config, connection=connection),
-                             connection=connection
-                             )
+                          email_sender=EmailSender(config=config),
+                          process_log=ProcessLog(process='Reports', config=config, connection=connection),
+                          connection=connection
+                          )
 
     reports.run_reports()
 
