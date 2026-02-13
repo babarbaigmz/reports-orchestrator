@@ -1,0 +1,31 @@
+file_config:
+  log_folder: logs
+  
+email_config:
+  sender: "sender@company.com"
+  recipients: "recipient1@company.com;recipient2company.com" 
+  
+database:
+  dsn: "DSN=TD Prod"
+ 
+logging:
+  version: 1
+  disable_existing_loggers: true
+  formatters:
+    reports:
+      format: "%(asctime)s - %(module)s - %(levelname)s - %(message)s"
+      datefmt: "%d-%b-%Y %H:%M:%S"
+  handlers:
+    filehandler:
+      class: logging.FileHandler
+      formatter: bau_reports
+      level: DEBUG
+      filename: 'Reports_Process.log'
+      mode: "w"
+    console:
+      class: logging.StreamHandler
+      formatter: reports
+      level: DEBUG
+  root:
+    level: DEBUG
+    handlers: [console,filehandler]
