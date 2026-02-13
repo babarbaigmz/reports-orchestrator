@@ -4,17 +4,17 @@ from common.send_email import EmailSender
 from common.constants import ProcessFormats
 from common.process_log import ProcessLog
 from common.database_operations import DatabaseConnection
-from common.get_driver import GetDriver
+from common.get_edge_driver import GetEdgeDriver
 
 
 def main():
     config = Config()
     connection = DatabaseConnection(config=config)
-    bau_reports = Reports(config=config,
-                          email_sender=EmailSender(config=config),
-                          process_log=ProcessLog(process='Reports', config=config, connection=connection),
-                          connection=connection
-                          )
+    reports = Reports(config=config,
+                      email_sender=EmailSender(config=config),
+                      process_log=ProcessLog(process='Reports', config=config, connection=connection),
+                      connection=connection
+                      )
 
     reports.run_reports()
 

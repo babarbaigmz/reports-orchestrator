@@ -11,9 +11,7 @@ class GetEdgeDriver:
         self.edge_browser_version = EdgeBrowser(self.logger)
         self.edge_driver_version = EdgeDriver(self.logger)
 
-
     def get_edge_driver(self):
-
         # Clear Proxy
         self.proxy.clear_proxy()
 
